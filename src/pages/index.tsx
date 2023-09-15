@@ -28,7 +28,8 @@ interface HomeProps {
 export default function Home({ postsPagination }: HomeProps): JSX.Element {
   return (
     <div className={commonStyles.container}>
-      <img src="/logo.svg" alt="logo" className={styles.logo} />
+      <img src="/Logo.svg" alt="logo" className={styles.logo} />
+
       <main className={styles.posts}>
         {postsPagination.results.map(post => (
           <Link key={post.uid} href={`/post/${post.uid}`}>
