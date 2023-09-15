@@ -1,11 +1,13 @@
 import { GetStaticPaths, GetStaticProps } from 'next';
 
+import { useRouter } from 'next/router';
 import { getPrismicClient } from '../../services/prismic';
 
 import commonStyles from '../../styles/common.module.scss';
 import styles from './post.module.scss';
+import Header from '../../components/Header';
 
-interface Post {
+interface PostProp {
   first_publication_date: string | null;
   data: {
     title: string;
@@ -23,23 +25,69 @@ interface Post {
 }
 
 interface PostProps {
-  post: Post;
+  post: PostProp;
 }
 
-// export default function Post() {
-//   // TODO
-// }
+export default function Post({ post }: PostProps): JSX.Element {
+  const router = useRouter();
 
-// export const getStaticPaths = async () => {
-//   const prismic = getPrismicClient({});
-//   const posts = await prismic.getByType(TODO);
+  if (router.isFallback) {
+    return <div>Carregando...</div>;
+  }
 
-//   // TODO
-// };
+  return (
+    <>
+      <Header />
+      <div className={commonStyles.container}>
+        {/* Renderize o conteúdo do post aqui */}
+      </div>
+    </>
+  );
+}
 
-// export const getStaticProps = async ({params }) => {
-//   const prismic = getPrismicClient({});
-//   const response = await prismic.getByUID(TODO);
+export const getStaticPaths: GetStaticPaths = async () => {
+  const prismic = getPrismicClient({});
+  const response = await prismic.query('', {});
 
-//   // TODO
-// };
+  const paths = response.results.map(post => ({
+    params: {
+      slug: post.uid,
+    },
+  }));
+
+  return {
+    paths,
+    fallback: true,
+  };
+};
+
+export const getStaticProps: GetStaticProps<PostProps> = async ({ params }) => {
+  let slug = params?.slug;
+
+  if (Array.isArray(slug)) {
+    [slug] = slug;
+  }
+  const prismic = getPrismicClient({});
+  const response = await prismic.getByUID('nome_do_seu_tipo_de_post', slug, {});
+
+  const post: PostProp = {
+    first_publication_date: response.first_publication_date,
+    data: {
+      title: response.data.title,
+      banner: {
+        url: response.data.banner.url,
+      },
+      author: response.data.author,
+      content: response.data.content.map(section => ({
+        heading: section.heading,
+        body: section.body,
+      })),
+    },
+  };
+
+  return {
+    props: {
+      post,
+    },
+  };
+};
