@@ -12,6 +12,8 @@
 
 ignite-template-reactjs-criando-um-projeto-do-zero
 
+Exercício cujo principal objetivo é criar um blog do zero. <br>A partir de uma aplicação praticamente em branco que deve consumir os dados do Prismic e ter a interface implementada conforme o layout do Figma proposto no curso Ignite da Rocketseat.
+
 ## 📝 Licença
 
 Esse projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
